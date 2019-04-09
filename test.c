@@ -6,14 +6,14 @@
 /*   By: flbeaumo <flbeaumo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/08 17:31:29 by flbeaumo          #+#    #+#             */
-/*   Updated: 2019/04/08 20:21:17 by flbeaumo         ###   ########.fr       */
+/*   Updated: 2019/04/09 19:58:24 by flbeaumo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "test.h"
 
 
-t_dir       *push_back(t_dir *lst, int value)
+static t_dir       *push_back(t_dir *lst, int value)
 {
     t_dir *new_node;
     t_dir *pos;
@@ -31,6 +31,21 @@ t_dir       *push_back(t_dir *lst, int value)
     return (lst);
 }
 
+static int    swap(t_dir *prev, t_dir *current, t_dir *next)
+{
+    t_dir   *tmp;
+
+    tmp = next;
+    if (current->number > next->number)
+    {
+        current->next = next->next;
+        next->next = current;
+        prev->next = tmp;
+        return (1);
+    }
+    return (0);
+}
+
 void        display(t_dir *lst)
 {
     while (lst)
@@ -46,7 +61,6 @@ t_dir       *sort(t_dir *lst)
     t_dir   *current;
     t_dir   *next;
     t_dir   *start;
-    t_dir   *tmp;
     int     sorted;
 
     sorted = 1;
@@ -54,20 +68,32 @@ t_dir       *sort(t_dir *lst)
     prev = lst;
     current = start;
     next = current->next;
-    tmp = next;
+    lst = lst->next;
+    int i = 0;
+    int j = 0;
     while (sorted)
     {
         sorted = 0;
         while (next)
         {
-            if (current->number > next->number)
+            printf("current->number: %d > next->number: %d ? \n", current->number, next->number);
+            ++i;
+            if (swap(prev, current, next))
             {
-                    current->next = next->next;
-                    next->next = current;
-                    prev->next = tmp;
-                break ;
+                sorted = 1;
+                prev = next;
+                next = next->next;
+            }
+            else
+            {
+                printf("Le else\n");                /*    <----- DEBUG -------|    */
+                prev = prev->next;
+                current = current->next;
+                next = next->next;
             }
         }
+        ++j;
+        printf("%d passage pour %d iterrations\n", j, i);
     }
     return (start);
 }
@@ -90,8 +116,6 @@ int         main(void)
     printf("\n");
     display(lst->next);
     printf("\n");
-
-
 
     return (0);
 }
